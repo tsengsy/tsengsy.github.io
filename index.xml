@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Steven&#39;s Blog</title>
+        <link>http://tsengsy.github.io/</link>
+        <description>Recent content on Steven&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Thu, 07 Jan 2021 10:58:39 +1100</lastBuildDate><atom:link href="http://tsengsy.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Tackling SSL limits for Application Load Balancers</title>
+        <link>http://tsengsy.github.io/p/ssl-limits-alb/</link>
+        <pubDate>Thu, 07 Jan 2021 10:58:39 +1100</pubDate>
+        
+        <guid>http://tsengsy.github.io/p/ssl-limits-alb/</guid>
+        <description>&lt;img src="http://tsengsy.github.io/p/ssl-limits-alb/stock_world.jpg" alt="Featured image of post Tackling SSL limits for Application Load Balancers" /&gt;&lt;p&gt;&lt;strong&gt;Disclaimer&lt;/strong&gt;
+All information i write is of my own opinion, and does not reflect&lt;/p&gt;
+&lt;p&gt;Last year, i&amp;rsquo;ve been in a discussion with a customer about how to manage SSL certificates when you use an Application Load Balancer (ALB). Currently, as of January 07 2021, ALB&amp;rsquo;s have a maximum of 25 SSL certificates.&lt;/p&gt;
+&lt;p&gt;However, what happens if you want to host or support more than 25 certificates for your business? Let&amp;rsquo;s work through how we can resolve this.&lt;/p&gt;
+&lt;p&gt;The simplest solution to start with might be to use &lt;strong&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Rule-Based Routing on Application Load Balancers&lt;/a&gt;&lt;/strong&gt;. This allows you utilise the same 443 port, but &lt;a class=&#34;link&#34; href=&#34;https://aws.amazon.com/blogs/aws/new-advanced-request-routing-for-aws-application-load-balancers/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;handle path or hostname based routing&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;figure style=&#34;flex-grow: 314; flex-basis: 755px&#34;&gt;
+		&lt;a href=&#34;http://tsengsy.github.io/p/ssl-limits-alb/image001.jpg&#34; data-size=&#34;1934x614&#34;&gt;&lt;img src=&#34;http://tsengsy.github.io/p/ssl-limits-alb/image001.jpg&#34;
+				srcset=&#34;http://tsengsy.github.io/p/ssl-limits-alb/image001_hua4e63d9e3ea4efc62a837c34d070ea56_150154_480x0_resize_q75_box.jpg 480w, http://tsengsy.github.io/p/ssl-limits-alb/image001_hua4e63d9e3ea4efc62a837c34d070ea56_150154_1024x0_resize_q75_box.jpg 1024w&#34;
+				width=&#34;1934&#34;
+				height=&#34;614&#34;
+				loading=&#34;lazy&#34;
+				alt=&#34;Rule Based Routing on ALB&#34;&gt;
+		&lt;/a&gt;
+		
+		&lt;figcaption&gt;Rule Based Routing on ALB&lt;/figcaption&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;However, lets assume you have the following infrastructure and you are hosting a website for hundreds of customers.&lt;/p&gt;
+&lt;p&gt;&lt;figure style=&#34;flex-grow: 211; flex-basis: 508px&#34;&gt;
+		&lt;a href=&#34;http://tsengsy.github.io/p/ssl-limits-alb/image002.jpg&#34; data-size=&#34;1208x570&#34;&gt;&lt;img src=&#34;http://tsengsy.github.io/p/ssl-limits-alb/image002.jpg&#34;
+				srcset=&#34;http://tsengsy.github.io/p/ssl-limits-alb/image002_hu815bb9be7721e93e72b9c88bf043423c_69912_480x0_resize_q75_box.jpg 480w, http://tsengsy.github.io/p/ssl-limits-alb/image002_hu815bb9be7721e93e72b9c88bf043423c_69912_1024x0_resize_q75_box.jpg 1024w&#34;
+				width=&#34;1208&#34;
+				height=&#34;570&#34;
+				loading=&#34;lazy&#34;
+				alt=&#34;Example infrastructure&#34;&gt;
+		&lt;/a&gt;
+		
+		&lt;figcaption&gt;Example infrastructure&lt;/figcaption&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;The difficulties you are experiencing are that for each custom domain, you need an ACM mapping and also there is the 25 limit per ELB. You don&amp;rsquo;t want to keep creating ALBs just for a group of 25 certificates due to cost.&lt;/p&gt;
+&lt;h3 id=&#34;the-first-method&#34;&gt;The First Method&lt;/h3&gt;
+&lt;p&gt;The first method we can use is to implement CloudFront in-between Elastic beanstalk  and Route53. This means that you can have as many CloudFront distributions that you would like to have, and assign HTTPS on CloudFront, setup ACM and remove the need for SSL to be done on the load balancer. However you can only associate a maximum of 1 SSL/TLS cert with each CloudFront Distribution.&lt;/p&gt;
+&lt;p&gt;&lt;figure style=&#34;flex-grow: 209; flex-basis: 503px&#34;&gt;
+		&lt;a href=&#34;http://tsengsy.github.io/p/ssl-limits-alb/image003.jpg&#34; data-size=&#34;1216x580&#34;&gt;&lt;img src=&#34;http://tsengsy.github.io/p/ssl-limits-alb/image003.jpg&#34;
+				srcset=&#34;http://tsengsy.github.io/p/ssl-limits-alb/image003_hu7fba9da1679ce4a56c592454604cb9c1_82402_480x0_resize_q75_box.jpg 480w, http://tsengsy.github.io/p/ssl-limits-alb/image003_hu7fba9da1679ce4a56c592454604cb9c1_82402_1024x0_resize_q75_box.jpg 1024w&#34;
+				width=&#34;1216&#34;
+				height=&#34;580&#34;
+				loading=&#34;lazy&#34;
+				alt=&#34;First Solution&#34;&gt;
+		&lt;/a&gt;
+		
+		&lt;figcaption&gt;First Solution&lt;/figcaption&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;h3 id=&#34;the-second-method&#34;&gt;The Second Method&lt;/h3&gt;
+&lt;p&gt;The second method is to implement your own proxy (HAproxy / NGINX). You do have to consider management overhead, plus you cannot take advantage of ACM to perform automated certificate rotation, as ACM only works in conjunction with select AWS services. You’d also want to script the certificate rotation process and have to manage scaling the instance. This is one of the most commonly used methods to work around the 25 cert limit at present.&lt;/p&gt;
+&lt;p&gt;&lt;figure style=&#34;flex-grow: 211; flex-basis: 506px&#34;&gt;
+		&lt;a href=&#34;http://tsengsy.github.io/p/ssl-limits-alb/image004.jpg&#34; data-size=&#34;1072x508&#34;&gt;&lt;img src=&#34;http://tsengsy.github.io/p/ssl-limits-alb/image004.jpg&#34;
+				srcset=&#34;http://tsengsy.github.io/p/ssl-limits-alb/image004_hu7fba9da1679ce4a56c592454604cb9c1_66649_480x0_resize_q75_box.jpg 480w, http://tsengsy.github.io/p/ssl-limits-alb/image004_hu7fba9da1679ce4a56c592454604cb9c1_66649_1024x0_resize_q75_box.jpg 1024w&#34;
+				width=&#34;1072&#34;
+				height=&#34;508&#34;
+				loading=&#34;lazy&#34;
+				alt=&#34;Second Solution&#34;&gt;
+		&lt;/a&gt;
+		
+		&lt;figcaption&gt;Second Solution&lt;/figcaption&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;h3 id=&#34;the-third-method&#34;&gt;The Third Method&lt;/h3&gt;
+&lt;p&gt;The third method is more expensive, but you create multiple ELBs which then route to your elastic beanstalk. I’d be estimating the cost between this solution and the one above if you were going down the SSL proxy / gateway route. Looking to scale this you’d be adding n+1 LB, up to the maximum of 50 load balancers per region.&lt;/p&gt;
+&lt;p&gt;&lt;figure style=&#34;flex-grow: 207; flex-basis: 498px&#34;&gt;
+		&lt;a href=&#34;http://tsengsy.github.io/p/ssl-limits-alb/image005.jpg&#34; data-size=&#34;1370x660&#34;&gt;&lt;img src=&#34;http://tsengsy.github.io/p/ssl-limits-alb/image005.jpg&#34;
+				srcset=&#34;http://tsengsy.github.io/p/ssl-limits-alb/image005_hu7fba9da1679ce4a56c592454604cb9c1_96113_480x0_resize_q75_box.jpg 480w, http://tsengsy.github.io/p/ssl-limits-alb/image005_hu7fba9da1679ce4a56c592454604cb9c1_96113_1024x0_resize_q75_box.jpg 1024w&#34;
+				width=&#34;1370&#34;
+				height=&#34;660&#34;
+				loading=&#34;lazy&#34;
+				alt=&#34;Third Solution&#34;&gt;
+		&lt;/a&gt;
+		
+		&lt;figcaption&gt;Third Solution&lt;/figcaption&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;Personally in my opinion, it makes more sense to start with investigating whether the CloudFront route is a viable option, as you really want to remove the hassle of manually rotating certificates. You should remember to also setup an ALIAS record instead of CNAME (reduces the cost), and you could also encrypt the connection between CloudFront and your Elastic Beanstalk endpoint. The encryption is optional as it depends on your security standpoint and whether some websites needs internal encryption.&lt;/p&gt;
+&lt;p&gt;There is also a maximum of 200 CloudFront distributions per account, but this can be increased with a support request.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;Any questions or concerns? Feel free to reach me at &lt;!-- raw HTML omitted --&gt;&lt;a href=&#34;mailto:yiyang.tseng@gmail.com&#34;&gt;yiyang.tseng@gmail.com&lt;/a&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

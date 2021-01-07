@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>SSL on Steven&#39;s Blog</title>
+    <link>http://tsengsy.github.io/tags/ssl/</link>
+    <description>Recent content in SSL on Steven&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 07 Jan 2021 10:58:39 +1100</lastBuildDate><atom:link href="http://tsengsy.github.io/tags/ssl/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Tackling SSL limits for Application Load Balancers</title>
+      <link>http://tsengsy.github.io/p/ssl-limits-alb/</link>
+      <pubDate>Thu, 07 Jan 2021 10:58:39 +1100</pubDate>
+      
+      <guid>http://tsengsy.github.io/p/ssl-limits-alb/</guid>
+      <description>Disclaimer All information i write is of my own opinion, and does not reflect
+Last year, i&amp;rsquo;ve been in a discussion with a customer about how to manage SSL certificates when you use an Application Load Balancer (ALB). Currently, as of January 07 2021, ALB&amp;rsquo;s have a maximum of 25 SSL certificates.
+However, what happens if you want to host or support more than 25 certificates for your business? Let&amp;rsquo;s work through how we can resolve this.</description>
+    </item>
+    
+  </channel>
+</rss>

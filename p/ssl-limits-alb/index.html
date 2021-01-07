@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Disclaimer All information i write is of my own opinion, and does not reflect
+Last year, i&amp;rsquo;ve been in a discussion with a customer about how to manage SSL certificates when you use an Application Load Balancer (ALB). Currently, as of January 07 2021, ALB&amp;rsquo;s have a maximum of 25 SSL certificates.
+However, what happens if you want to host or support more than 25 certificates for your business? Let&amp;rsquo;s work through how we can resolve this.'><title>Tackling SSL limits for Application Load Balancers</title>
+
+<link rel='canonical' href='http://tsengsy.github.io/p/ssl-limits-alb/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Tackling SSL limits for Application Load Balancers'>
+<meta property='og:description' content='Disclaimer All information i write is of my own opinion, and does not reflect
+Last year, i&amp;rsquo;ve been in a discussion with a customer about how to manage SSL certificates when you use an Application Load Balancer (ALB). Currently, as of January 07 2021, ALB&amp;rsquo;s have a maximum of 25 SSL certificates.
+However, what happens if you want to host or support more than 25 certificates for your business? Let&amp;rsquo;s work through how we can resolve this.'>
+<meta property='og:url' content='http://tsengsy.github.io/p/ssl-limits-alb/'>
+<meta property='og:site_name' content='Steven&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='aws' /><meta property='article:tag' content='networking' /><meta property='article:tag' content='SSL' /><meta property='article:tag' content='alb' /><meta property='article:published_time' content='2021-01-07T10:58:39&#43;11:00'/><meta property='article:modified_time' content='2021-01-07T10:58:39&#43;11:00'/><meta property='og:image' content='http://tsengsy.github.io/p/ssl-limits-alb/stock_world.jpg' />
+<meta name="twitter:title" content="Tackling SSL limits for Application Load Balancers">
+<meta name="twitter:description" content="Disclaimer All information i write is of my own opinion, and does not reflect
+Last year, i&amp;rsquo;ve been in a discussion with a customer about how to manage SSL certificates when you use an Application Load Balancer (ALB). Currently, as of January 07 2021, ALB&amp;rsquo;s have a maximum of 25 SSL certificates.
+However, what happens if you want to host or support more than 25 certificates for your business? Let&amp;rsquo;s work through how we can resolve this."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='http://tsengsy.github.io/p/ssl-limits-alb/stock_world.jpg' /><style>
+    
+:root {
+    --article-font-family: "Roboto", var(--base-font-family);
+}
+</style>
+
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "<https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap>";
+    
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+    
+        document.head.appendChild(customFont);
+    }());
+</script>
+    </head>
+    <body class="">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.body.dataset.scheme = 'dark';
+        } else {
+            document.body.dataset.scheme = 'light';
+        }
+    })();
+</script><div class="container main-container flex on-phone--column extended article-page with-toolbar">
+            <aside class="sidebar left-sidebar sticky">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header class="site-info">
+        
+            <figure class="site-avatar">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/1609979306472_hubf0254114a658bc7909a4c71f2c8a620_60546_300x0_resize_q75_box.jpeg" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+
+                
+            </figure>
+        
+        <h1 class="site-name"><a href="http://tsengsy.github.io">Steven&#39;s Blog</a></h1>
+        <h2 class="site-description"></h2>
+    </header>
+
+    <ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/about'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+
+        
+            <li id="dark-mode-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                <span>Dark Mode</span>
+            </li>
+        
+    </ol>
+</aside>
+
+            <main class="main full-width">
+    <div id="article-toolbar">
+        <a href="http://tsengsy.github.io" class="back-home">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+            <span>Back</span>
+        </a>
+    </div>
+
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/ssl-limits-alb/">
+                <img src="/p/ssl-limits-alb/stock_world_hu3d03a01dcc18bc5be0e67db3d8d209a6_662934_800x0_resize_q75_box.jpg"
+                        srcset="/p/ssl-limits-alb/stock_world_hu3d03a01dcc18bc5be0e67db3d8d209a6_662934_800x0_resize_q75_box.jpg 800w, /p/ssl-limits-alb/stock_world_hu3d03a01dcc18bc5be0e67db3d8d209a6_662934_1600x0_resize_q75_box.jpg 1600w"
+                        width="800" 
+                        height="532" 
+                        loading="lazy"
+                        alt="Featured image of post Tackling SSL limits for Application Load Balancers" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+
+    <h2 class="article-title">
+        <a href="/p/ssl-limits-alb/">Tackling SSL limits for Application Load Balancers</a>
+    </h2>
+
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Jan 07, 2021</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <p><strong>Disclaimer</strong>
+All information i write is of my own opinion, and does not reflect</p>
+<p>Last year, i&rsquo;ve been in a discussion with a customer about how to manage SSL certificates when you use an Application Load Balancer (ALB). Currently, as of January 07 2021, ALB&rsquo;s have a maximum of 25 SSL certificates.</p>
+<p>However, what happens if you want to host or support more than 25 certificates for your business? Let&rsquo;s work through how we can resolve this.</p>
+<p>The simplest solution to start with might be to use <strong><a class="link" href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html"  target="_blank" rel="noopener"
+    >Rule-Based Routing on Application Load Balancers</a></strong>. This allows you utilise the same 443 port, but <a class="link" href="https://aws.amazon.com/blogs/aws/new-advanced-request-routing-for-aws-application-load-balancers/"  target="_blank" rel="noopener"
+    >handle path or hostname based routing</a>.</p>
+<p><figure style="flex-grow: 314; flex-basis: 755px">
+		<a href="/p/ssl-limits-alb/image001.jpg" data-size="1934x614"><img src="/p/ssl-limits-alb/image001.jpg"
+				srcset="/p/ssl-limits-alb/image001_hua4e63d9e3ea4efc62a837c34d070ea56_150154_480x0_resize_q75_box.jpg 480w, /p/ssl-limits-alb/image001_hua4e63d9e3ea4efc62a837c34d070ea56_150154_1024x0_resize_q75_box.jpg 1024w"
+				width="1934"
+				height="614"
+				loading="lazy"
+				alt="Rule Based Routing on ALB">
+		</a>
+		
+		<figcaption>Rule Based Routing on ALB</figcaption>
+		
+	</figure></p>
+<hr>
+<p>However, lets assume you have the following infrastructure and you are hosting a website for hundreds of customers.</p>
+<p><figure style="flex-grow: 211; flex-basis: 508px">
+		<a href="/p/ssl-limits-alb/image002.jpg" data-size="1208x570"><img src="/p/ssl-limits-alb/image002.jpg"
+				srcset="/p/ssl-limits-alb/image002_hu815bb9be7721e93e72b9c88bf043423c_69912_480x0_resize_q75_box.jpg 480w, /p/ssl-limits-alb/image002_hu815bb9be7721e93e72b9c88bf043423c_69912_1024x0_resize_q75_box.jpg 1024w"
+				width="1208"
+				height="570"
+				loading="lazy"
+				alt="Example infrastructure">
+		</a>
+		
+		<figcaption>Example infrastructure</figcaption>
+		
+	</figure></p>
+<p>The difficulties you are experiencing are that for each custom domain, you need an ACM mapping and also there is the 25 limit per ELB. You don&rsquo;t want to keep creating ALBs just for a group of 25 certificates due to cost.</p>
+<h3 id="the-first-method">The First Method</h3>
+<p>The first method we can use is to implement CloudFront in-between Elastic beanstalk  and Route53. This means that you can have as many CloudFront distributions that you would like to have, and assign HTTPS on CloudFront, setup ACM and remove the need for SSL to be done on the load balancer. However you can only associate a maximum of 1 SSL/TLS cert with each CloudFront Distribution.</p>
+<p><figure style="flex-grow: 209; flex-basis: 503px">
+		<a href="/p/ssl-limits-alb/image003.jpg" data-size="1216x580"><img src="/p/ssl-limits-alb/image003.jpg"
+				srcset="/p/ssl-limits-alb/image003_hu7fba9da1679ce4a56c592454604cb9c1_82402_480x0_resize_q75_box.jpg 480w, /p/ssl-limits-alb/image003_hu7fba9da1679ce4a56c592454604cb9c1_82402_1024x0_resize_q75_box.jpg 1024w"
+				width="1216"
+				height="580"
+				loading="lazy"
+				alt="First Solution">
+		</a>
+		
+		<figcaption>First Solution</figcaption>
+		
+	</figure></p>
+<h3 id="the-second-method">The Second Method</h3>
+<p>The second method is to implement your own proxy (HAproxy / NGINX). You do have to consider management overhead, plus you cannot take advantage of ACM to perform automated certificate rotation, as ACM only works in conjunction with select AWS services. You’d also want to script the certificate rotation process and have to manage scaling the instance. This is one of the most commonly used methods to work around the 25 cert limit at present.</p>
+<p><figure style="flex-grow: 211; flex-basis: 506px">
+		<a href="/p/ssl-limits-alb/image004.jpg" data-size="1072x508"><img src="/p/ssl-limits-alb/image004.jpg"
+				srcset="/p/ssl-limits-alb/image004_hu7fba9da1679ce4a56c592454604cb9c1_66649_480x0_resize_q75_box.jpg 480w, /p/ssl-limits-alb/image004_hu7fba9da1679ce4a56c592454604cb9c1_66649_1024x0_resize_q75_box.jpg 1024w"
+				width="1072"
+				height="508"
+				loading="lazy"
+				alt="Second Solution">
+		</a>
+		
+		<figcaption>Second Solution</figcaption>
+		
+	</figure></p>
+<h3 id="the-third-method">The Third Method</h3>
+<p>The third method is more expensive, but you create multiple ELBs which then route to your elastic beanstalk. I’d be estimating the cost between this solution and the one above if you were going down the SSL proxy / gateway route. Looking to scale this you’d be adding n+1 LB, up to the maximum of 50 load balancers per region.</p>
+<p><figure style="flex-grow: 207; flex-basis: 498px">
+		<a href="/p/ssl-limits-alb/image005.jpg" data-size="1370x660"><img src="/p/ssl-limits-alb/image005.jpg"
+				srcset="/p/ssl-limits-alb/image005_hu7fba9da1679ce4a56c592454604cb9c1_96113_480x0_resize_q75_box.jpg 480w, /p/ssl-limits-alb/image005_hu7fba9da1679ce4a56c592454604cb9c1_96113_1024x0_resize_q75_box.jpg 1024w"
+				width="1370"
+				height="660"
+				loading="lazy"
+				alt="Third Solution">
+		</a>
+		
+		<figcaption>Third Solution</figcaption>
+		
+	</figure></p>
+<hr>
+<p>Personally in my opinion, it makes more sense to start with investigating whether the CloudFront route is a viable option, as you really want to remove the hassle of manually rotating certificates. You should remember to also setup an ALIAS record instead of CNAME (reduces the cost), and you could also encrypt the connection between CloudFront and your Elastic Beanstalk endpoint. The encryption is optional as it depends on your security standpoint and whether some websites needs internal encryption.</p>
+<p>There is also a maximum of 200 CloudFront distributions per account, but this can be increased with a support request.</p>
+<hr>
+<p>Any questions or concerns? Feel free to reach me at <!-- raw HTML omitted --><a href="mailto:yiyang.tseng@gmail.com">yiyang.tseng@gmail.com</a><!-- raw HTML omitted --></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/aws/">aws</a>
+        
+            <a href="/tags/networking/">networking</a>
+        
+            <a href="/tags/ssl/">SSL</a>
+        
+            <a href="/tags/alb/">alb</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+</aside>
+
+
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 Steven&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.0.1">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css">
+            </main>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"
+    integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g=" crossorigin="anonymous"></script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
