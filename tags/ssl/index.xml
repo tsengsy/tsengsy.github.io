@@ -13,9 +13,9 @@
       <pubDate>Thu, 07 Jan 2021 10:58:39 +1100</pubDate>
       
       <guid>http://tsengsy.github.io/p/ssl-limits-alb/</guid>
-      <description>Disclaimer All information i write is of my own opinion, and does not reflect
+      <description>Disclaimer All information i write is of my own opinion, and is not reflective of AWS or Amazon.
 Last year, i&amp;rsquo;ve been in a discussion with a customer about how to manage SSL certificates when you use an Application Load Balancer (ALB). Currently, as of January 07 2021, ALB&amp;rsquo;s have a maximum of 25 SSL certificates.
-However, what happens if you want to host or support more than 25 certificates for your business? Let&amp;rsquo;s work through how we can resolve this.</description>
+However, what happens if you want to host or support more than 25 certificates for your business?</description>
     </item>
     
   </channel>
