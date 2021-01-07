@@ -8,7 +8,7 @@
     <language>en-us</language>
     <lastBuildDate>Thu, 07 Jan 2021 10:58:39 +1100</lastBuildDate><atom:link href="http://tsengsy.github.io/tags/aws/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Tackling SSL limits for Application Load Balancers</title>
+      <title>Tackling 25 SSL certificate limits for AWS Application Load Balancers</title>
       <link>http://tsengsy.github.io/p/ssl-limits-alb/</link>
       <pubDate>Thu, 07 Jan 2021 10:58:39 +1100</pubDate>
       
