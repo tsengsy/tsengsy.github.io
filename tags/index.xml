@@ -6,22 +6,49 @@
     <description>Recent content in Tags on Steven&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 07 Jan 2021 10:58:39 +1100</lastBuildDate><atom:link href="http://tsengsy.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 04 Feb 2021 14:08:03 +1100</lastBuildDate><atom:link href="http://tsengsy.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>aws</title>
+      <link>http://tsengsy.github.io/tags/aws/</link>
+      <pubDate>Thu, 04 Feb 2021 14:08:03 +1100</pubDate>
+      
+      <guid>http://tsengsy.github.io/tags/aws/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>binlog</title>
+      <link>http://tsengsy.github.io/tags/binlog/</link>
+      <pubDate>Thu, 04 Feb 2021 14:08:03 +1100</pubDate>
+      
+      <guid>http://tsengsy.github.io/tags/binlog/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>data</title>
+      <link>http://tsengsy.github.io/tags/data/</link>
+      <pubDate>Thu, 04 Feb 2021 14:08:03 +1100</pubDate>
+      
+      <guid>http://tsengsy.github.io/tags/data/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>replication</title>
+      <link>http://tsengsy.github.io/tags/replication/</link>
+      <pubDate>Thu, 04 Feb 2021 14:08:03 +1100</pubDate>
+      
+      <guid>http://tsengsy.github.io/tags/replication/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>alb</title>
       <link>http://tsengsy.github.io/tags/alb/</link>
       <pubDate>Thu, 07 Jan 2021 10:58:39 +1100</pubDate>
       
       <guid>http://tsengsy.github.io/tags/alb/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>aws</title>
-      <link>http://tsengsy.github.io/tags/aws/</link>
-      <pubDate>Thu, 07 Jan 2021 10:58:39 +1100</pubDate>
-      
-      <guid>http://tsengsy.github.io/tags/aws/</guid>
       <description></description>
     </item>
     

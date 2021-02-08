@@ -6,7 +6,101 @@
         <description>Recent content on Steven&#39;s Blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Thu, 07 Jan 2021 10:58:39 +1100</lastBuildDate><atom:link href="http://tsengsy.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Thu, 04 Feb 2021 14:08:03 +1100</lastBuildDate><atom:link href="http://tsengsy.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Different methods to tackle Change Data Capture (CDC) &amp; Data Replication</title>
+        <link>http://tsengsy.github.io/p/methods-to-tackle-data-replication/</link>
+        <pubDate>Thu, 04 Feb 2021 14:08:03 +1100</pubDate>
+        
+        <guid>http://tsengsy.github.io/p/methods-to-tackle-data-replication/</guid>
+        <description>&lt;img src="http://tsengsy.github.io/p/methods-to-tackle-data-replication/hdd.jpeg" alt="Featured image of post Different methods to tackle Change Data Capture (CDC) &amp; Data Replication" /&gt;&lt;p&gt;&lt;strong&gt;Disclaimer&lt;/strong&gt;
+All information i write is of my own opinion, and is not reflective of AWS or Amazon.&lt;/p&gt;
+&lt;h2 id=&#34;why&#34;&gt;Why&lt;/h2&gt;
+&lt;p&gt;Data replication is the process of making multiple copies of your data and storing this data at multiple locations to improve their accessibility across the network.&lt;/p&gt;
+&lt;p&gt;Some situations which you may want to replicate your data may include (but are not limited to):&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Data flowing from your application to your database needs to be replicated to a data lake or data warehouse&lt;/li&gt;
+&lt;li&gt;You&amp;rsquo;d like to replicate data from a database to a secondary database location for Disaster Recovery (DR) processes or to perform Data Analytics&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;how&#34;&gt;How&lt;/h2&gt;
+&lt;p&gt;Common database technologies today either have built-in capabilities, or use third-party tools to accomplish data replication. While Oracle and Microsoft SQL actively support data replication, some other technologies (MySQL / Postgres) may not include this feature out of the box.&lt;/p&gt;
+&lt;p&gt;I hope the following gives you some ideas on how you can architect methods to replicate data, both before and after the data hits your data storage solution.&lt;/p&gt;
+&lt;h3 id=&#34;1-replicate-the-data-before-the-data-storage-layer&#34;&gt;1. Replicate the data before the data storage layer&lt;/h3&gt;
+&lt;p&gt;The first method is potentially the easiest - and that is to replicate the data BEFORE the data storage layer.&lt;/p&gt;
+&lt;p&gt;Pros:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;By replicating and handling the data before it reaches the data storage medium, you can fan-out the data before managing or changing the configuration of the database.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Cons:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;You must ensure that the application or processing of this data is strongly consistent, because you are now introducing a potential failure link&lt;/li&gt;
+&lt;li&gt;You are responsible to write the code that handles the data that is to be replicated to different mediums.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;p&gt;&lt;figure style=&#34;flex-grow: 142; flex-basis: 341px&#34;&gt;
+		&lt;a href=&#34;http://tsengsy.github.io/p/methods-to-tackle-data-replication/image-001.png&#34; data-size=&#34;760x534&#34;&gt;&lt;img src=&#34;http://tsengsy.github.io/p/methods-to-tackle-data-replication/image-001.png&#34;
+				srcset=&#34;http://tsengsy.github.io/p/methods-to-tackle-data-replication/image-001_hu54d32dbb10fee4ce08e92728ec2eb179_31460_480x0_resize_box_2.png 480w, http://tsengsy.github.io/p/methods-to-tackle-data-replication/image-001_hu54d32dbb10fee4ce08e92728ec2eb179_31460_1024x0_resize_box_2.png 1024w&#34;
+				width=&#34;760&#34;
+				height=&#34;534&#34;
+				loading=&#34;lazy&#34;
+				alt=&#34;Data Replication - Before the storage layer&#34;&gt;
+		&lt;/a&gt;
+		
+		&lt;figcaption&gt;Data Replication - Before the storage layer&lt;/figcaption&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;h3 id=&#34;2-utilise-read-replicas&#34;&gt;2. Utilise Read Replica(s)&lt;/h3&gt;
+&lt;p&gt;You may be in a situation where you&amp;rsquo;d rather not handle the data replication, and prefer to rely on read replicas to peform data replication. The benefits of this approach is that by creating a read replica, you can offset read-heavy workloads to the additional copy of your data, reducing the load on your primary instance.&lt;/p&gt;
+&lt;p&gt;Pros:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Database managed feature, so no need to write application logic&lt;/li&gt;
+&lt;li&gt;Can take advantage of write or read replicas based on workflow requirements&lt;/li&gt;
+&lt;li&gt;Read Replicas can be promoted to a master node in the event of a failure&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Cons:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Increased cost due to secondary instance&lt;/li&gt;
+&lt;li&gt;Homogenous method of replicating data, you&amp;rsquo;ll have to introduce a new method or service to go mysql &amp;ndash;&amp;gt; Postgres for example&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;figure style=&#34;flex-grow: 113; flex-basis: 271px&#34;&gt;
+		&lt;a href=&#34;http://tsengsy.github.io/p/methods-to-tackle-data-replication/image-002.png&#34; data-size=&#34;684x605&#34;&gt;&lt;img src=&#34;http://tsengsy.github.io/p/methods-to-tackle-data-replication/image-002.png&#34;
+				srcset=&#34;http://tsengsy.github.io/p/methods-to-tackle-data-replication/image-002_hud998e801e4847eba829eba0d99f15b64_40427_480x0_resize_box_2.png 480w, http://tsengsy.github.io/p/methods-to-tackle-data-replication/image-002_hud998e801e4847eba829eba0d99f15b64_40427_1024x0_resize_box_2.png 1024w&#34;
+				width=&#34;684&#34;
+				height=&#34;605&#34;
+				loading=&#34;lazy&#34;
+				alt=&#34;Data Replication - Read Replica&#34;&gt;
+		&lt;/a&gt;
+		
+		&lt;figcaption&gt;Data Replication - Read Replica&lt;/figcaption&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;h3 id=&#34;3-aurora-data-activity-streams&#34;&gt;3. Aurora Data Activity Streams&lt;/h3&gt;
+&lt;p&gt;If you are using Amazon Aurora Database, you can utilise the &lt;a class=&#34;link&#34; href=&#34;https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/DBActivityStreams.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Database Activity Streams feature&lt;/a&gt; to provide near real-time streams of activities within the relational database.&lt;/p&gt;
+&lt;p&gt;Database Activity Streams are supported for both MySQL and PostgreSQL.&lt;/p&gt;
+&lt;h3 id=&#34;4-amazon-data-migration-serice-dms&#34;&gt;4. Amazon Data Migration Serice (DMS)&lt;/h3&gt;
+&lt;p&gt;In some instances, you may need to perform a &lt;em&gt;heterogeneous&lt;/em&gt; data replication between different database engines, such as MySQL to Postgres.
+The challenges involved with this may prove to be frustrating as you have to build and code your own DB engine translation, or you could use a service such as &lt;!-- raw HTML omitted --&gt;Amazon Data Migration Service (DMS)&lt;!-- raw HTML omitted --&gt;.&lt;/p&gt;
+&lt;p&gt;You could also use DMS as part of your data lake workflow by connecting DMS to your database, and then using AWS Glue to format the data. Ideally you want to always keep a copy of the original data before formatting, as part of your data retention and data lineage strategy.&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://aws.amazon.com/blogs/big-data/loading-ongoing-data-lake-changes-with-aws-dms-and-aws-glue/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;This blog highlights this strategy.&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;figure style=&#34;flex-grow: 220; flex-basis: 530px&#34;&gt;
+		&lt;a href=&#34;http://tsengsy.github.io/p/methods-to-tackle-data-replication/image-003.png&#34; data-size=&#34;800x362&#34;&gt;&lt;img src=&#34;http://tsengsy.github.io/p/methods-to-tackle-data-replication/image-003.png&#34;
+				srcset=&#34;http://tsengsy.github.io/p/methods-to-tackle-data-replication/image-003_hu788e52a089b160b5de60500b09c6cb5a_75925_480x0_resize_box_2.png 480w, http://tsengsy.github.io/p/methods-to-tackle-data-replication/image-003_hu788e52a089b160b5de60500b09c6cb5a_75925_1024x0_resize_box_2.png 1024w&#34;
+				width=&#34;800&#34;
+				height=&#34;362&#34;
+				loading=&#34;lazy&#34;
+				alt=&#34;Data Replication - DMS&#34;&gt;
+		&lt;/a&gt;
+		
+		&lt;figcaption&gt;Data Replication - DMS&lt;/figcaption&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;h3 id=&#34;5-third-party-tools--binlog-replication&#34;&gt;5. Third Party Tools &amp;amp; Binlog Replication&lt;/h3&gt;
+&lt;p&gt;You may find yourself in a situation where all of the above is not viable, and you prefer an open source method of data replication. You can look at utilising &lt;a class=&#34;link&#34; href=&#34;https://debezium.io/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Debezium&lt;/a&gt; or look for other Change Data Capture (CDC) tools.&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Tackling 25 SSL certificate limits for AWS Application Load Balancers</title>
         <link>http://tsengsy.github.io/p/ssl-limits-alb/</link>
         <pubDate>Thu, 07 Jan 2021 10:58:39 +1100</pubDate>

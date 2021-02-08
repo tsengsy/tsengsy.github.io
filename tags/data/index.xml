@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on Steven&#39;s Blog</title>
-    <link>http://tsengsy.github.io/post/</link>
-    <description>Recent content in Posts on Steven&#39;s Blog</description>
+    <title>data on Steven&#39;s Blog</title>
+    <link>http://tsengsy.github.io/tags/data/</link>
+    <description>Recent content in data on Steven&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 04 Feb 2021 14:08:03 +1100</lastBuildDate><atom:link href="http://tsengsy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 04 Feb 2021 14:08:03 +1100</lastBuildDate><atom:link href="http://tsengsy.github.io/tags/data/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Different methods to tackle Change Data Capture (CDC) &amp; Data Replication</title>
       <link>http://tsengsy.github.io/p/methods-to-tackle-data-replication/</link>
@@ -17,17 +17,6 @@
 Why Data replication is the process of making multiple copies of your data and storing this data at multiple locations to improve their accessibility across the network.
 Some situations which you may want to replicate your data may include (but are not limited to):
  Data flowing from your application to your database needs to be replicated to a data lake or data warehouse You&amp;rsquo;d like to replicate data from a database to a secondary database location for Disaster Recovery (DR) processes or to perform Data Analytics  How Common database technologies today either have built-in capabilities, or use third-party tools to accomplish data replication.</description>
-    </item>
-    
-    <item>
-      <title>Tackling 25 SSL certificate limits for AWS Application Load Balancers</title>
-      <link>http://tsengsy.github.io/p/ssl-limits-alb/</link>
-      <pubDate>Thu, 07 Jan 2021 10:58:39 +1100</pubDate>
-      
-      <guid>http://tsengsy.github.io/p/ssl-limits-alb/</guid>
-      <description>Disclaimer All information i write is of my own opinion, and is not reflective of AWS or Amazon.
-Last year, i&amp;rsquo;ve been in a discussion with a customer about how to manage SSL certificates when you use an Application Load Balancer (ALB). Currently, as of January 07 2021, ALB&amp;rsquo;s have a maximum of 25 SSL certificates.
-However, what happens if you want to host or support more than 25 certificates for your business?</description>
     </item>
     
   </channel>

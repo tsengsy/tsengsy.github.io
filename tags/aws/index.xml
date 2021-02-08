@@ -6,7 +6,19 @@
     <description>Recent content in aws on Steven&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 07 Jan 2021 10:58:39 +1100</lastBuildDate><atom:link href="http://tsengsy.github.io/tags/aws/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 04 Feb 2021 14:08:03 +1100</lastBuildDate><atom:link href="http://tsengsy.github.io/tags/aws/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Different methods to tackle Change Data Capture (CDC) &amp; Data Replication</title>
+      <link>http://tsengsy.github.io/p/methods-to-tackle-data-replication/</link>
+      <pubDate>Thu, 04 Feb 2021 14:08:03 +1100</pubDate>
+      
+      <guid>http://tsengsy.github.io/p/methods-to-tackle-data-replication/</guid>
+      <description>Disclaimer All information i write is of my own opinion, and is not reflective of AWS or Amazon.
+Why Data replication is the process of making multiple copies of your data and storing this data at multiple locations to improve their accessibility across the network.
+Some situations which you may want to replicate your data may include (but are not limited to):
+ Data flowing from your application to your database needs to be replicated to a data lake or data warehouse You&amp;rsquo;d like to replicate data from a database to a secondary database location for Disaster Recovery (DR) processes or to perform Data Analytics  How Common database technologies today either have built-in capabilities, or use third-party tools to accomplish data replication.</description>
+    </item>
+    
     <item>
       <title>Tackling 25 SSL certificate limits for AWS Application Load Balancers</title>
       <link>http://tsengsy.github.io/p/ssl-limits-alb/</link>

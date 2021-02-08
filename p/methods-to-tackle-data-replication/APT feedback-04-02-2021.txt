@@ -1,0 +1,25 @@
+APT feedback
+
+Thoughts - 
+
+Last possible action = Take Active-Active off the table. Dynamo is a must for active-active
+
+Ian Spike out global db
+Dilanka not as keen 
+
+Binlog replication with Global Databases 
+
+Mark List
+
+[February 4, 2021, 3:14 PM] Jones, Mark: Action: Aurora deep dive session, focusing on Global Databases
+Action: MSK team re transactions
+Action: health checks and monitoring
+Action: Service discovery and health based routing
+Action: Chaos techniques
+Action: XTR team
+Action: release management (recoverable and guard rails)
+Action: Eventing / CQRS
+[February 4, 2021, 3:14 PM] Jones, Mark: 3 streams:
+release management (recoverable and guard rails)
+short term tech uplift (aurora global, event streams)
+long term decoupling and technology (decomposition of the core platform)
